@@ -72,6 +72,41 @@ static void test_null_checks(void)
     assert(rb_pop(&rb, NULL) == RB_ERROR_NULL);
 }
 
+static void test_wrap_around(void)
+{
+    ring_buffer_t rb;
+    int value = 0;
+    size_t i;
+
+    assert(rb_init(&rb) == RB_OK);
+
+    for (i = 0U; i < RING_BUFFER_CAPACITY; i++)
+    {
+        assert(rb_push(&rb, (int)i) == RB_OK);
+    }
+
+    for (i = 0U; i < 3U; i++)
+    {
+        assert(rb_pop(&rb, &value) == RB_OK);
+        assert(value == (int)i);
+    }
+
+    assert(rb_push(&rb, 100) == RB_OK);
+    assert(rb_push(&rb, 101) == RB_OK);
+    assert(rb_push(&rb, 102) == RB_OK);
+
+    assert(rb_pop(&rb, &value) == RB_OK); assert(value == 3);
+    assert(rb_pop(&rb, &value) == RB_OK); assert(value == 4);
+    assert(rb_pop(&rb, &value) == RB_OK); assert(value == 5);
+    assert(rb_pop(&rb, &value) == RB_OK); assert(value == 6);
+    assert(rb_pop(&rb, &value) == RB_OK); assert(value == 7);
+    assert(rb_pop(&rb, &value) == RB_OK); assert(value == 100);
+    assert(rb_pop(&rb, &value) == RB_OK); assert(value == 101);
+    assert(rb_pop(&rb, &value) == RB_OK); assert(value == 102);
+
+    assert(rb_is_empty(&rb));
+}
+
 int main(void)
 {
     test_init();
