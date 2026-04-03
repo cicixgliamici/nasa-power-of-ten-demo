@@ -166,6 +166,55 @@ static void test_wrap_around(void)
     assert(rb_is_empty(&rb));
 }
 
+static void test_reuse_after_clear(void)
+{
+    ring_buffer_t rb;
+    int value = 0;
+
+    assert(rb_init(&rb) == RB_OK);
+
+    assert(rb_push(&rb, 7) == RB_OK);
+    assert(rb_push(&rb, 8) == RB_OK);
+    assert(rb_clear(&rb) == RB_OK);
+
+    assert(rb_is_empty(&rb));
+    assert(rb_push(&rb, 11) == RB_OK);
+    assert(rb_peek(&rb, &value) == RB_OK);
+    assert(value == 11);
+
+    assert(rb_pop(&rb, &value) == RB_OK);
+    assert(value == 11);
+    assert(rb_is_empty(&rb));
+}
+
+static void test_multiple_cycles(void)
+{
+    ring_buffer_t rb;
+    int value = 0;
+    size_t cycle;
+    size_t i;
+
+    assert(rb_init(&rb) == RB_OK);
+
+    for (cycle = 0U; cycle < 5U; cycle++)
+    {
+        for (i = 0U; i < RING_BUFFER_CAPACITY; i++)
+        {
+            assert(rb_push(&rb, (int)(cycle * 100U + i)) == RB_OK);
+        }
+
+        assert(rb_is_full(&rb));
+
+        for (i = 0U; i < RING_BUFFER_CAPACITY; i++)
+        {
+            assert(rb_pop(&rb, &value) == RB_OK);
+            assert(value == (int)(cycle * 100U + i));
+        }
+
+        assert(rb_is_empty(&rb));
+    }
+}
+
 int main(void)
 {
     test_init();
@@ -176,6 +225,8 @@ int main(void)
     test_peek();
     test_clear();
     test_wrap_around();
+    test_reuse_after_clear();
+    test_multiple_cycles();
 
     printf("All ring buffer tests passed.\n");
     return 0;
