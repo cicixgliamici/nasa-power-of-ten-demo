@@ -1,5 +1,18 @@
-# Editor and OS files
-.DS_Store
-Thumbs.db
+# Build artifacts
+/test_ring_buffer
+/examples/rule01_control_flow_good
+/examples/rule02_loop_bounds_good
+/examples/rule03_dynamic_memory_good
+/examples/rule04_small_functions_good
+/examples/rule05_assertions_good
+/examples/rule06_scope_good
+/examples/rule07_return_checks_good
+/examples/rule08_macros_good
+/examples/rule09_pointers_good
+/examples/rule10_warnings_good
+
+# Editor / OS files
 .vscode/
 .idea/
+.DS_Store
+Thumbs.db
