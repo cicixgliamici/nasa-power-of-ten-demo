@@ -73,3 +73,28 @@ rb_status_t rb_pop(ring_buffer_t *rb, int *value)
 
     return RB_OK;
 }
+
+static bool rb_is_valid(const ring_buffer_t *rb)
+{
+    if (rb == NULL)
+    {
+        return false;
+    }
+
+    if (rb->head >= RING_BUFFER_CAPACITY)
+    {
+        return false;
+    }
+
+    if (rb->tail >= RING_BUFFER_CAPACITY)
+    {
+        return false;
+    }
+
+    if (rb->count > RING_BUFFER_CAPACITY)
+    {
+        return false;
+    }
+
+    return true;
+}
