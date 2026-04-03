@@ -1,5 +1,7 @@
 CC = gcc
-CFLAGS = -std=c99 -Wall -Wextra -Werror -pedantic -Iinclude
+CFLAGS = -std=c99 -Wall -Wextra -Werror -pedantic -Wconversion -Wshadow -Wstrict-prototypes -Iinclude
+DEBUG_CFLAGS = $(CFLAGS) -O0 -g
+SANITIZE_CFLAGS = $(DEBUG_CFLAGS) -fsanitize=address,undefined
 
 TARGET = test_ring_buffer
 SRC = src/ring_buffer.c
@@ -19,9 +21,19 @@ GOOD_EXAMPLES = \
 
 GOOD_BINS = $(GOOD_EXAMPLES:.c=)
 
+.PHONY: all test debug sanitize examples clean
+
 all: test examples
 
 test: $(TARGET)
+	./$(TARGET)
+
+debug: $(SRC) $(TEST) include/ring_buffer.h
+	$(CC) $(DEBUG_CFLAGS) $(SRC) $(TEST) -o $(TARGET)
+	./$(TARGET)
+
+sanitize: $(SRC) $(TEST) include/ring_buffer.h
+	$(CC) $(SANITIZE_CFLAGS) $(SRC) $(TEST) -o $(TARGET)
 	./$(TARGET)
 
 $(TARGET): $(SRC) $(TEST) include/ring_buffer.h
