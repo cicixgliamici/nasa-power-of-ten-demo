@@ -26,6 +26,11 @@ rb_status_t rb_init(ring_buffer_t *rb);
 rb_status_t rb_push(ring_buffer_t *rb, int value);
 rb_status_t rb_pop(ring_buffer_t *rb, int *value);
 
+size_t rb_size(const ring_buffer_t *rb);
+size_t rb_capacity(void);
+rb_status_t rb_peek(const ring_buffer_t *rb, int *value);
+rb_status_t rb_clear(ring_buffer_t *rb);
+
 bool rb_is_empty(const ring_buffer_t *rb);
 bool rb_is_full(const ring_buffer_t *rb);
 
