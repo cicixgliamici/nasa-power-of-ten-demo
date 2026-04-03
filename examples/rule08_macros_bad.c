@@ -1,2 +1,10 @@
-#define SQUARE_BAD(x) x * x
-#define DOUBLE_AND_ADD_BAD(a, b) (((a) * 2) + ((b) * 2))
+#include <stdio.h>
+
+#define SQUARE(x) x * x
+
+int main(void)
+{
+    int result = SQUARE(1 + 2);
+    printf("%d\n", result);
+    return 0;
+}
