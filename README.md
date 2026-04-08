@@ -86,3 +86,33 @@ make examples
 This is not a production-ready safety-critical library.
 
 It is a compact engineering study project whose goal is to demonstrate how a technical paper can be read, interpreted, implemented, and critically assessed.
+
+## Quick Reviewer Guide
+
+If you are visiting this repository to evaluate the project quickly, the best path is:
+
+1. Read this README for the project goal and structure.
+2. Open `docs/reviewer-guide.md` for a short guided tour.
+3. Open `docs/rules-summary-table.md` for a compact overview of all ten rules.
+4. Inspect `src/` and `tests/` for the main implementation artifact.
+5. Read `docs/design-decisions.md` and `docs/reflection.md` for engineering rationale.
+
+This repository is intentionally small: the focus is not feature breadth, but traceability from engineering guideline to implementation choice.
+
+## Quality Gates
+
+The repository uses a few simple quality gates to keep the artifact disciplined and auditable:
+
+- `make` builds the core implementation
+- `make test` runs the test suite
+- `make examples` builds the example material
+- CI runs these checks automatically on push and pull request
+- `docs/static-analysis-notes.md` records the intended warning/static-analysis discipline
+
+These checks are deliberately lightweight, consistent with the spirit of the project: keep the code small enough to understand, and strict enough to reason about.
+
+## Additional Documentation
+
+- `docs/reviewer-guide.md` — how to read the repository as an evaluator
+- `docs/rules-summary-table.md` — compact status/mapping for the ten rules
+- `docs/static-analysis-notes.md` — compiler warnings and static-analysis stance
