@@ -2,6 +2,9 @@
 
 This repository is intentionally small, but it still benefits from a disciplined build and warning policy.
 
+The goal of these notes is not to overstate the verification story,
+but to make the current quality stance explicit and reviewable.
+
 ## Goals
 
 The warning/static-analysis stance of this project is guided by three principles:
@@ -14,13 +17,19 @@ The warning/static-analysis stance of this project is guided by three principles
 
 The repository aims to compile cleanly under a strict warning profile.
 
-Typical expectations for a project of this size include:
+In this repository, the `Makefile` currently enables:
 
 - `-Wall`
 - `-Wextra`
-- `-Wpedantic`
+- `-Werror`
+- `-pedantic`
+- `-Wconversion`
+- `-Wshadow`
+- `-Wstrict-prototypes`
 
-Depending on the environment, additional flags such as `-Wconversion` or `-Wshadow` may also be useful, but should be adopted only if they improve clarity rather than create noise.
+This warning profile is intentionally strict for a project of this size:
+the point is not to maximize compiler flag count, but to keep questionable
+constructs visible and to support code review.
 
 ## Why this matters here
 
@@ -28,9 +37,36 @@ The value of this repository is not in performance or feature richness.
 
 Its value is in disciplined implementation under explicit constraints.
 
-For that reason, warning-clean compilation is not just a “nice to have”: it is part of making the artifact small, inspectable, and trustworthy.
+For that reason, warning-clean compilation is not just a "nice to have":
+it is part of making the artifact small, inspectable, and trustworthy.
 
-## Possible lightweight static-analysis tools
+## Current Quality Gates
+
+The repository already includes a lightweight but concrete verification path:
+
+- `make` builds the core artifact and examples
+- `make test` builds and runs the unit tests
+- `make sanitize` provides a sanitizer-oriented build mode
+- GitHub Actions runs build, tests, and examples on push and pull request
+
+These checks are intentionally modest, but they align with the scope of the project:
+small codebase, explicit constraints, and reviewability over toolchain complexity.
+
+## Platform Considerations
+
+The repository's default verification path is exercised in Linux CI, which matches the simplest `make` workflow.
+
+On Windows, the same project can be built with a MinGW-compatible toolchain using `mingw32-make`.
+The core build, tests, and example compilation work with that setup, but sanitizer availability is toolchain-specific.
+
+In particular, some MinGW distributions do not include the runtime libraries required for:
+
+- `-fsanitize=address`
+- `-fsanitize=undefined`
+
+In those environments, the `sanitize` target should be treated as an optional capability rather than a guaranteed cross-platform check.
+
+## Possible Lightweight Static-Analysis Tools
 
 The following tools are natural fits for a repository of this kind:
 
@@ -40,7 +76,7 @@ The following tools are natural fits for a repository of this kind:
 
 These are not required for understanding the repository, but they are useful extensions for future hardening.
 
-## Scope note
+## Scope Note
 
 This project does **not** attempt to reproduce the full industrial verification stack of a safety-critical environment.
 
@@ -50,13 +86,14 @@ Instead, it adopts a lighter but educationally meaningful stance:
 - explicit constraints,
 - tests,
 - warnings,
+- optional sanitizers,
 - and traceability documentation.
 
-## Future extension ideas
+## Future Extension Ideas
 
 Possible future improvements include:
 
-- documenting the exact warning flags used in the Makefile,
 - adding an optional `cppcheck` target,
-- adding a sanitizer-enabled debug target,
-- and attaching warning/static-analysis results to CI artifacts.
+- documenting example output or expected verification steps for reviewers,
+- attaching warning/static-analysis results to CI artifacts,
+- and expanding CI with additional compiler/toolchain variants when useful.
