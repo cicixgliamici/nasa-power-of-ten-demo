@@ -5,7 +5,8 @@ on:
   pull_request:
 
 jobs:
-  build-and-test:
+  linux:
+    name: Linux Build And Test
     runs-on: ubuntu-latest
 
     steps:
@@ -22,4 +23,36 @@ jobs:
         run: make test
 
       - name: Build examples
+        run: make examples
+
+      - name: Run sanitizer build
+        run: make sanitize
+
+  windows:
+    name: Windows Build And Test
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: UCRT64
+          install: >-
+            make
+            mingw-w64-ucrt-x86_64-gcc
+
+      - name: Build
+        shell: msys2 {0}
+        run: make
+
+      - name: Run tests
+        shell: msys2 {0}
+        run: make test
+
+      - name: Build examples
+        shell: msys2 {0}
         run: make examples

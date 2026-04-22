@@ -1,5 +1,8 @@
 # NASA Power of Ten Demo
 
+[![CI](https://github.com/cicixgliamici/nasa-power-of-ten-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/cicixgliamici/nasa-power-of-ten-demo/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 This repository is a small C project inspired by the NASA/JPL paper
 *The Power of Ten: Rules for Developing Safety-Critical Code*.
 
@@ -196,3 +199,9 @@ Some Windows MinGW distributions do not ship the AddressSanitizer and UndefinedB
 - `docs/evidence-matrix.md` - one-page mapping from rule to code, tests, and examples
 - `docs/rules-summary-table.md` - compact status/mapping for the ten rules
 - `docs/static-analysis-notes.md` - compiler warnings and static-analysis stance
+
+## Repository Hygiene
+
+- `LICENSE` defines reuse permissions explicitly
+- GitHub Actions validates Linux and Windows build paths
+- `CODEOWNERS` and a pull request template make review expectations clearer
