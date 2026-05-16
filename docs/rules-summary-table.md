@@ -12,12 +12,12 @@ The goal is not to claim perfect or exhaustive compliance, but to make the repos
 | 2 | Give loops fixed bounds | Bounded data structure and preference for predictable iteration | Partially demonstrated |
 | 3 | Avoid dynamic memory allocation after initialization | Ring buffer chosen specifically to support bounded storage and no heap dependence in the core artifact | Demonstrated in design intent |
 | 4 | Keep functions small | Core artifact intentionally kept compact and auditable | Partially demonstrated |
-| 5 | Use assertions liberally for internal invariants | Assertions used as a mechanism for documenting and checking assumptions | Partially demonstrated |
+| 5 | Use assertions liberally for internal invariants | Assertions plus ACSL contracts document and check structural/FIFO assumptions | Partially demonstrated |
 | 6 | Keep data/control scope narrow | Small public API and limited state footprint in the main artifact | Partially demonstrated |
 | 7 | Check return values / propagate errors explicitly | Error handling is treated as part of the design, not as an afterthought | Partially demonstrated |
 | 8 | Limit preprocessor use / avoid complexity hidden by macros | Repository keeps the implementation intentionally direct and inspectable | Demonstrated in style intent |
 | 9 | Prefer simple tool-friendly code | Small codebase, warning-clean intent, and static-analysis notes | Partially demonstrated |
-| 10 | Keep code easy to audit | Repository structure, traceability docs, tests, and reflections all aim at auditability | Demonstrated at repository level |
+| 10 | Keep code easy to audit | Repository structure, traceability docs, tests, optional static analysis, and Frama-C paths all aim at auditability | Demonstrated at repository level |
 
 ## How to interpret the status column
 

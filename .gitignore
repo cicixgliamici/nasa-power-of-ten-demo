@@ -24,6 +24,11 @@
 *.o
 *.obj
 *.out
+/coverage_ring_buffer
+/coverage_ring_buffer.exe
+*.gcda
+*.gcno
+*.gcov
 
 # Editor / OS files
 .vscode/

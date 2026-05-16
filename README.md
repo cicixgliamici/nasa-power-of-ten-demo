@@ -1,6 +1,7 @@
 # NASA Power of Ten Demo
 
 [![CI](https://github.com/cicixgliamici/nasa-power-of-ten-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/cicixgliamici/nasa-power-of-ten-demo/actions/workflows/ci.yml)
+[![Formal Verification](https://github.com/cicixgliamici/nasa-power-of-ten-demo/actions/workflows/formal-verification.yml/badge.svg)](https://github.com/cicixgliamici/nasa-power-of-ten-demo/actions/workflows/formal-verification.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 This repository is a small C project inspired by the NASA/JPL paper
@@ -27,12 +28,43 @@ If you only have a few minutes, focus on these points:
 * the main artifact is intentionally small and auditable
 * implementation choices are tied back to explicit engineering rules
 * tests cover normal behavior plus key edge cases
+* ACSL contracts document the public API invariants and side effects
 * the repository includes reflection on trade-offs, not just rule-following
+
+## Reviewer Quick Start
+
+For the normal reviewer path on a supported toolchain:
+
+```bash
+make review
+```
+
+For optional evidence when the tools are installed:
+
+```bash
+make review-optional WP_PROVER=z3
+make coverage
+```
+
+Use `docs/review-results.md` as a lightweight template for recording command
+results during a walkthrough or PR review.
+
+What to inspect first:
+
+* `include/ring_buffer.h`
+* `include/ring_buffer_contracts.h`
+* `src/ring_buffer.c`
+* `tests/test_ring_buffer.c`
+* `proof/ring_buffer_fifo_harness.c`
 
 Quick entry points:
 
 * Main artifact: `include/ring_buffer.h` and `src/ring_buffer.c`
 * Test evidence: `tests/test_ring_buffer.c`
+* Contract evidence: `docs/frama-c-contracts.md`
+* Verification matrix: `docs/verification-matrix.md`
+* Lightweight safety case: `docs/safety-case.md`
+* Reviewer readiness: `docs/reviewer-readiness.md`
 * Rule traceability: `docs/rule-mapping.md`
 
 ## Main Artifact
@@ -55,6 +87,7 @@ yet rich enough to demonstrate several of the paper's core ideas:
 * `include/` - public API
 * `src/` - implementation
 * `tests/` - unit tests for the ring buffer
+* `proof/` - Frama-C proof harnesses for stronger contract scenarios
 * `examples/` - isolated bad/good examples for each rule
 * `docs/` - mapping from paper rules to design decisions, examples, and reflections
 
@@ -78,6 +111,7 @@ This repository is intended to show:
 * explicit design trade-offs
 * traceability from guideline to implementation
 * testing beyond "happy path" scenarios
+* a layered verification story: tests, assertions, ACSL contracts, optional Frama-C, and optional static analysis
 
 ## Implemented Rules At A Glance
 
@@ -87,7 +121,7 @@ This repository is intended to show:
 | 2 | Use bounded loops and predictable iteration | Fixed-capacity design and bounded test loops |
 | 3 | Avoid dynamic allocation after initialization | No heap allocation in the core artifact |
 | 4 | Keep functions small | Narrow API and short single-purpose functions |
-| 5 | Assert internal invariants | `assert` checks in `src/ring_buffer.c` |
+| 5 | Assert internal invariants | `assert` checks plus ACSL predicates and proof harnesses |
 | 6 | Keep scope narrow | Local variables introduced close to use |
 | 7 | Check return values explicitly | `rb_status_t` API and assert-based tests |
 | 8 | Keep preprocessor use simple | Include guards and simple constants only |
@@ -102,6 +136,7 @@ A mapping between the paper's rules and this repository is provided in:
 * `docs/design-decisions.md`
 * `docs/reflection.md`
 * `docs/evidence-matrix.md`
+* `docs/reviewer-readiness.md`
 
 ## Build
 
@@ -139,6 +174,29 @@ On Windows with MinGW/WinLibs:
 mingw32-make examples
 ```
 
+## Reviewer Commands
+
+```bash
+make review
+```
+
+Runs the default reviewer path: build, tests, examples, and sanitizer checks on
+toolchains that support them.
+
+```bash
+make review-optional WP_PROVER=z3
+```
+
+Runs optional tool-dependent checks: `cppcheck`, `make verify`, and
+`make verify-fifo`.
+
+```bash
+make coverage
+```
+
+Builds with GCC coverage flags, runs the tests, and emits `gcov` text output
+when coverage tooling is available.
+
 ## Notes
 
 This is not a production-ready safety-critical library.
@@ -154,7 +212,9 @@ If you are visiting this repository to evaluate the project quickly, the best pa
 3. Open `docs/evidence-matrix.md` for a one-page traceability view.
 4. Open `docs/rules-summary-table.md` for a compact overview of all ten rules.
 5. Inspect `src/` and `tests/` for the main implementation artifact.
-6. Read `docs/design-decisions.md` and `docs/reflection.md` for engineering rationale.
+6. Read `docs/frama-c-contracts.md` for the ACSL/Frama-C layer.
+7. Read `docs/reviewer-readiness.md` for current strengths and limits.
+8. Read `docs/design-decisions.md` and `docs/reflection.md` for engineering rationale.
 
 This repository is intentionally small: the focus is not feature breadth, but traceability from engineering guideline to implementation choice.
 
@@ -166,6 +226,12 @@ The repository uses a few simple quality gates to keep the artifact disciplined 
 - `make test` runs the test suite
 - `make examples` builds the example material
 - `make sanitize` provides an optional sanitizer-oriented build path
+- `make review` runs the normal reviewer command sequence
+- `make review-optional` runs optional static/formal checks when tools are installed
+- `make coverage` provides optional GCC/gcov coverage evidence
+- `make verify` runs the optional Frama-C/WP contract verification path
+- `make verify-fifo` runs the stronger FIFO proof harness path
+- `make cppcheck` runs an optional lightweight static-analysis pass
 - CI runs these checks automatically on push and pull request
 - `docs/static-analysis-notes.md` records the warning/static-analysis stance
 
@@ -177,8 +243,11 @@ The verification story is intentionally lightweight but explicit:
 
 - strict compiler warnings are enabled in the `Makefile`
 - unit tests cover FIFO behavior, empty/full handling, null checks, clear, and wrap-around
+- ACSL contracts specify API preconditions, side effects, and basic state transitions
+- stronger ACSL helpers specify logical FIFO preservation for push/pop/peek
 - example files provide small compliant/non-compliant comparisons for the paper rules
 - CI runs build, tests, and example compilation automatically
+- the manual formal-verification workflow runs the Frama-C paths when toolchain evidence is needed
 - the repository documents how static-analysis and sanitizer-oriented checks fit into the project
 
 ## Platform Notes
@@ -199,6 +268,13 @@ Some Windows MinGW distributions do not ship the AddressSanitizer and UndefinedB
 - `docs/evidence-matrix.md` - one-page mapping from rule to code, tests, and examples
 - `docs/rules-summary-table.md` - compact status/mapping for the ten rules
 - `docs/static-analysis-notes.md` - compiler warnings and static-analysis stance
+- `docs/frama-c-contracts.md` - optional Frama-C/WP contract-verification path
+- `docs/verification-matrix.md` - tests, contracts, tooling, and known limits
+- `docs/safety-case.md` - compact claim/evidence/limit summary
+- `docs/reviewer-readiness.md` - reviewer-facing readiness assessment
+- `docs/review-results.md` - lightweight evidence log template
+- `docs/toolchain.md` - supported and optional toolchain paths
+- `docs/known-limits.md` - explicit non-claims and scope limits
 
 ## Repository Hygiene
 

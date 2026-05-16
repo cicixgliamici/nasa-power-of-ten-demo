@@ -215,6 +215,56 @@ static void test_multiple_cycles(void)
     }
 }
 
+static void test_fifo_property_style_sequence(void)
+{
+    static const int operations[] = {
+        1, 2, 3, -1, 4, 5, -1, -1, 6, 7,
+        8, 9, 10, -1, -1, -1, -1, -1, -1, -1
+    };
+    enum
+    {
+        EXPECTED_CAPACITY = 32
+    };
+
+    ring_buffer_t rb;
+    int expected[EXPECTED_CAPACITY];
+    size_t expected_head = 0U;
+    size_t expected_count = 0U;
+    size_t i;
+
+    assert(rb_init(&rb) == RB_OK);
+
+    for (i = 0U; i < (sizeof(operations) / sizeof(operations[0])); i++)
+    {
+        if (operations[i] > 0)
+        {
+            const size_t expected_tail = expected_head + expected_count;
+
+            assert(expected_tail < EXPECTED_CAPACITY);
+            assert(rb_push(&rb, operations[i]) == RB_OK);
+            expected[expected_tail] = operations[i];
+            expected_count++;
+        }
+        else
+        {
+            int value = 0;
+
+            assert(expected_count > 0U);
+            assert(rb_pop(&rb, &value) == RB_OK);
+            assert(value == expected[expected_head]);
+            expected_head++;
+            expected_count--;
+        }
+
+        assert(rb_size(&rb) == expected_count);
+        assert(rb_is_empty(&rb) == (expected_count == 0U));
+        assert(rb_is_full(&rb) == (expected_count == RING_BUFFER_CAPACITY));
+    }
+
+    assert(expected_count == 0U);
+    assert(rb_is_empty(&rb));
+}
+
 int main(void)
 {
     test_init();
@@ -227,6 +277,7 @@ int main(void)
     test_wrap_around();
     test_reuse_after_clear();
     test_multiple_cycles();
+    test_fifo_property_style_sequence();
 
     printf("All ring buffer tests passed.\n");
     return 0;

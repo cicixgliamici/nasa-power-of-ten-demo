@@ -47,7 +47,15 @@ The repository already includes a lightweight but concrete verification path:
 - `make` builds the core artifact and examples
 - `make test` builds and runs the unit tests
 - `make sanitize` provides a sanitizer-oriented build mode
+- `make verify` provides an optional Frama-C/WP contract-verification path
+- `make verify-fifo` provides a stronger FIFO proof harness path
+- `make cppcheck` provides an optional static-analysis path when available
+- `make coverage` provides optional GCC/gcov coverage evidence when available
 - GitHub Actions runs build, tests, and examples on push and pull request
+
+See `docs/reviewer-readiness.md` for the broader reviewer-facing assessment of
+which evidence is present and which evidence remains outside this educational
+scope.
 
 These checks are intentionally modest, but they align with the scope of the project:
 small codebase, explicit constraints, and reviewability over toolchain complexity.
@@ -93,7 +101,9 @@ Instead, it adopts a lighter but educationally meaningful stance:
 
 Possible future improvements include:
 
-- adding an optional `cppcheck` target,
 - documenting example output or expected verification steps for reviewers,
+- expanding the ACSL model toward a complete abstract FIFO sequence,
+- evaluating CBMC for bounded model checking of fixed-capacity scenarios,
+- evaluating E-ACSL for runtime contract checking,
 - attaching warning/static-analysis results to CI artifacts,
 - and expanding CI with additional compiler/toolchain variants when useful.

@@ -5,9 +5,27 @@
 
 ## Validation
 
+Required reviewer path:
+
+- [ ] `make review`
+
+Individual checks, when useful:
+
 - [ ] `make`
 - [ ] `make test`
 - [ ] `make examples`
+- [ ] `make sanitize`
+
+Optional tool-dependent checks:
+
+- [ ] `make verify` when Frama-C is available or contracts changed
+- [ ] `make verify-fifo` when FIFO contracts or proof harness changed
+- [ ] `make cppcheck` when cppcheck is available
+- [ ] `make coverage` when GCC/gcov coverage is available
+
+Documentation:
+
+- [ ] docs updated when evidence, claims, or limitations changed
 
 ## Notes
 

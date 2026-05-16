@@ -72,6 +72,7 @@ Document and enforce invariants that should always hold internally.
 
 **Repository evidence**
 - Assertions are used in `src/ring_buffer.c` to guard internal assumptions.
+- ACSL predicates in `include/ring_buffer_contracts.h` state structural validity and FIFO-oriented logical range rules for Frama-C.
 - Null arguments are handled with explicit return codes where appropriate.
 - Isolated example: `examples/rule05_assertions_good.c`
 
@@ -146,6 +147,9 @@ Treat compiler diagnostics as part of the verification process.
 
 **Repository evidence**
 - `Makefile` enables strict compilation flags such as `-Wall -Wextra -Werror -pedantic`.
+- `Makefile` also includes optional `verify` and `verify-fifo` targets for Frama-C/WP contract checking.
+- `Makefile` includes an optional `cppcheck` target for lightweight static analysis.
+- `.github/workflows/formal-verification.yml` provides a manual workflow for running the formal-verification path.
 - Example: `Makefile`
 
 **Trade-off**  

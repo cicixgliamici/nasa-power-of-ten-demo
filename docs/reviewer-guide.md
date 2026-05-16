@@ -48,6 +48,18 @@ A good reading order is:
 7. `docs/rules-summary-table.md`  
    Compact overview of all ten rules and the repository’s current coverage.
 
+8. `docs/frama-c-contracts.md`
+   Optional Frama-C/WP verification path and ACSL contract scope.
+
+9. `docs/verification-matrix.md` and `docs/safety-case.md`
+   Compact summaries of evidence, claims, and known limits.
+
+10. `docs/reviewer-readiness.md`
+    Current readiness assessment for educational versus production-style review.
+
+11. `docs/toolchain.md`, `docs/review-results.md`, and `docs/known-limits.md`
+    Reproducible command paths, evidence logging, and explicit non-claims.
+
 ## What this repository tries to demonstrate
 
 This project is meant to demonstrate:
@@ -56,8 +68,11 @@ This project is meant to demonstrate:
 - disciplined implementation under explicit constraints,
 - bounded-state reasoning,
 - test-oriented engineering,
+- API contracts as explicit safety documentation,
+- a proof-oriented FIFO harness separate from production code,
 - traceability from principle to code,
 - and the ability to explain design choices clearly.
+- a repeatable reviewer command path with optional evidence capture.
 
 ## What this repository does not claim
 
